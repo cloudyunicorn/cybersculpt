@@ -1,70 +1,198 @@
 // utils/aiRecommendations.ts
 
+export interface AIRecommendation {
+  title: string;
+  icon: string;
+  sections: {
+    category: string;
+    items: string[];
+    tips?: string[];
+  }[];
+}
+
 export async function fetchAIRecommendations(
   bmi: number,
   goal: string,
   bmiCategory: string
-): Promise<string> {
+): Promise<AIRecommendation> {
   return new Promise((resolve) => {
     setTimeout(() => {
       const formattedBMI = bmi.toFixed(1);
-      let recommendations = `Personalized Health Recommendations\n\n`;
-      recommendations += `BMI: ${formattedBMI} (${bmiCategory})\n`;
-      recommendations += `Goal: ${goal}\n\n`;
       
-      // Recommendations based on BMI category
-      switch (bmiCategory) {
-        case "Underweight":
-          recommendations += `For Underweight:\n`;
-          recommendations += `• Nutrition: Focus on a calorie surplus with nutrient-dense foods such as lean proteins, whole grains, healthy fats, and snacks like smoothies and nuts.\n`;
-          recommendations += `• Exercise: Engage in light resistance training to gradually build muscle. Avoid excessive cardio that might burn too many calories.\n`;
-          recommendations += `• Lifestyle: Aim for 7-9 hours of quality sleep and consider consulting a nutritionist for a tailored meal plan.\n\n`;
-          break;
-        case "Normal":
-          recommendations += `For Normal BMI:\n`;
-          recommendations += `• Nutrition: Maintain a balanced diet with the right mix of proteins, carbs, and fats while focusing on portion control and whole foods.\n`;
-          recommendations += `• Exercise: Keep a balanced routine with moderate cardio and strength training (3-5 days a week) to preserve your fitness level.\n`;
-          recommendations += `• Lifestyle: Continue your healthy habits and monitor progress over time.\n\n`;
-          break;
-        case "Overweight":
-          recommendations += `For Overweight:\n`;
-          recommendations += `• Nutrition: Create a calorie deficit by emphasizing lean proteins, vegetables, and whole grains while reducing processed foods and sugary drinks.\n`;
-          recommendations += `• Exercise: Incorporate regular cardio (brisk walking, cycling, HIIT) along with strength training to boost metabolism.\n`;
-          recommendations += `• Lifestyle: Make sustainable lifestyle changes and monitor progress for gradual weight loss.\n\n`;
-          break;
-        case "Obese":
-          recommendations += `For Obesity:\n`;
-          recommendations += `• Nutrition: Consider a structured, calorie-controlled diet. Professional guidance from a nutritionist or healthcare provider can be very helpful.\n`;
-          recommendations += `• Exercise: Start with low-impact activities like walking or water aerobics and gradually increase intensity as your fitness improves.\n`;
-          recommendations += `• Lifestyle: Prioritize stress management, quality sleep (7-9 hours), and regular monitoring. Seek professional advice for a safe, personalized approach.\n\n`;
-          break;
-        default:
-          recommendations += `General:\nNo specific recommendations available for your BMI category. Please consult a healthcare provider for personalized advice.\n\n`;
-      }
-      
-      // Additional goal-specific recommendations
-      if (goal === "lose") {
-        recommendations += `Goal-Specific (Lose Weight):\n`;
-        recommendations += `• Incorporate HIIT sessions with strength training to boost metabolism.\n`;
-        recommendations += `• Maintain a modest calorie deficit while ensuring sufficient protein to preserve lean mass.\n\n`;
-      } else if (goal === "gain") {
-        recommendations += `Goal-Specific (Gain Weight):\n`;
-        recommendations += `• Focus on progressive resistance training with a calorie surplus.\n`;
-        recommendations += `• Increase protein intake to support muscle growth and consider nutrient-dense snacks throughout the day.\n\n`;
-      } else {
-        recommendations += `Goal-Specific (Maintain Weight):\n`;
-        recommendations += `• Continue with a balanced diet and regular exercise routine.\n`;
-        recommendations += `• Monitor your progress to stay on track.\n\n`;
-      }
-      
-      // General health tips
-      recommendations += `General Health Tips:\n`;
-      recommendations += `• Hydration: Drink at least 2-3 liters of water daily.\n`;
-      recommendations += `• Sleep: Aim for 7-9 hours of quality sleep each night.\n`;
-      recommendations += `• Monitoring: Track your progress and adjust your routine as needed.\n`;
-      recommendations += `• Professional Advice: Consider consulting health professionals for personalized guidance.\n`;
-      
+      const recommendations: AIRecommendation = {
+        title: `Your Personalized Health Plan 🌟`,
+        icon: '💪',
+        sections: [
+          {
+            category: '📊 Health Overview',
+            items: [
+              `BMI: ${formattedBMI} (${bmiCategory})`,
+              `Primary Goal: ${goal.charAt(0).toUpperCase() + goal.slice(1)} Weight`,
+              `Daily Hydration Goal: 2-3L 💧`,
+              `Recommended Sleep: 7-9 hours 🌙`
+            ]
+          },
+          ...getBMIBasedRecommendations(bmiCategory),
+          ...getGoalSpecificRecommendations(goal),
+          {
+            category: '🌟 General Wellness',
+            items: [
+              'Track progress weekly with measurements & photos',
+              'Practice stress-reduction techniques',
+              'Get sunlight exposure daily',
+              'Consider periodic check-ups'
+            ]
+          }
+        ]
+      };
+
       resolve(recommendations);
-    }, 1000); // simulate a 1-second API delay
+    }, 1000);
   });
+}
+
+function getBMIBasedRecommendations(bmiCategory: string) {
+  const recommendations = [];
+  
+  const baseRecommendations = {
+    Underweight: {
+      nutrition: [
+        '🍳 Breakfast: 3-egg omelette with avocado + oatmeal',
+        '🥪 Lunch: Grilled chicken wrap with hummus & veggies',
+        '🍲 Dinner: Salmon with quinoa & roasted sweet potatoes',
+        '🥛 Snacks: Greek yogurt with berries, trail mix, protein shake'
+      ],
+      exercise: [
+        '🏋️ Strength Training: 4x/week (Focus on compound movements)',
+        '🤸 Mobility: Daily 15-min stretching routine',
+        '🚴 Cardio: Light cycling 2x/week (20-30 mins)'
+      ],
+      lifestyle: [
+        'Track calorie intake using MyFitnessPal',
+        'Add healthy fats (nuts, olive oil, avocado)',
+        'Consider mass gainer shakes if struggling to eat enough'
+      ]
+    },
+    Normal: {
+      nutrition: [
+        '🥑 Balanced meals: 40% carbs, 30% protein, 30% fats',
+        '🐟 Omega-3 sources: Salmon, chia seeds, walnuts',
+        '🌿 Fiber-rich foods: Broccoli, berries, lentils'
+      ],
+      exercise: [
+        '🏃 Cardio: 150 mins moderate/week (running, swimming)',
+        '💪 Strength: Full-body workouts 3x/week',
+        '🧘 Recovery: Yoga or mobility sessions 2x/week'
+      ],
+      lifestyle: [
+        'Maintain consistent sleep schedule',
+        'Try new physical activities monthly',
+        'Practice mindful eating techniques'
+      ]
+    },
+    Overweight: {
+      nutrition: [
+        '🥦 Volume eating: Focus on fibrous vegetables',
+        '🍗 Protein: 1.6g/kg body weight (chicken, tofu, fish)',
+        '🚫 Limit: Processed sugars and refined carbs',
+        '🍵 Metabolism boosters: Green tea, chili peppers'
+      ],
+      exercise: [
+        '🔥 HIIT: 3x/week (20-30 min sessions)',
+        '🚶 LISS: Daily 45-min brisk walking',
+        '🏋️ Resistance Training: Circuit training 3x/week'
+      ],
+      lifestyle: [
+        'Use smaller plates for portion control',
+        'Practice 16:8 intermittent fasting',
+        'Stay accountable with weekly weigh-ins'
+      ]
+    },
+    Obese: {
+      nutrition: [
+        '🍽️ Plate method: 50% veggies, 25% protein, 25% carbs',
+        '🥤 Hydration: Drink water before meals',
+        '🍎 Smart swaps: Zoodles vs pasta, cauliflower rice',
+        '⏲️ Mindful eating: 20-minute meals'
+      ],
+      exercise: [
+        '🏊 Low-Impact: Water aerobics 3x/week',
+        '🪑 Chair exercises: Daily 15-min routine',
+        '🚶 Gradual walking: Start with 10-min sessions 3x/day'
+      ],
+      lifestyle: [
+        'Food journaling for awareness',
+        'Stress management techniques',
+        'Sleep quality improvement plan'
+      ]
+    }
+  };
+
+  const categoryData = baseRecommendations[bmiCategory as keyof typeof baseRecommendations] || {};
+  
+  recommendations.push({
+    category: `📈 ${bmiCategory} Management`,
+    items: [
+      ...(categoryData.nutrition || []),
+      ...(categoryData.exercise || [])
+    ],
+    tips: categoryData.lifestyle
+  });
+
+  return recommendations;
+}
+
+function getGoalSpecificRecommendations(goal: string) {
+  const goalRecommendations = {
+    lose: {
+      category: '🔥 Weight Loss Focus',
+      items: [
+        '🏃♀️ Cardio Acceleration: Add 2 sprint sessions/week',
+        '🍴 Meal Timing: Front-load calories (big breakfast)',
+        '🛑 Craving Control: Sugar-free gum, herbal tea',
+        '📉 Deficit Strategy: 500kcal daily reduction'
+      ],
+      tips: [
+        'Weekly progress photos',
+        'Non-scale victory tracking',
+        'Intermittent fasting options'
+      ]
+    },
+    gain: {
+      category: '💪 Muscle Gain Focus',
+      items: [
+        '🏋️ Progressive Overload: Increase weights 5% weekly',
+        '⏱️ Rest Periods: 90-120s between sets',
+        '🍌 Post-Workout: 3:1 carb:protein ratio',
+        '💤 Recovery: 8hr sleep minimum'
+      ],
+      tips: [
+        'Weekly weight checks',
+        'Mass gainer shakes if needed',
+        'Focus on compound lifts'
+      ]
+    },
+    maintain: {
+      category: '⚖️ Maintenance Focus',
+      items: [
+        '🔄 Training Variety: Try new sports/activities',
+        '🍽️ Diet: Cyclical calorie intake',
+        '📊 Monitoring: Weekly measurements',
+        '🎯 Goal Setting: Skill-based objectives'
+      ],
+      tips: [
+        'Seasonal body comp assessments',
+        'Macro cycling strategies',
+        'Active recovery weeks'
+      ]
+    }
+  };
+
+  const goalData = goalRecommendations[goal as keyof typeof goalRecommendations] || {};
+  
+  return [{
+    category: `🎯 ${goalData.category}`,
+    items: goalData.items,
+    tips: goalData.tips
+  }];
 }
