@@ -6,15 +6,15 @@ import { ThemeProvider } from "next-themes";
 import { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "My Next.js 13 App",
-  description: "An example Next.js 13 application with Tailwind CSS and theming",
+  title: "Cyber Sculpt",
+  description: "A modern health and fitness app.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <ThemeProvider attribute="class" defaultTheme="dark">
+        <ThemeProvider attribute="class" defaultTheme="light">
           {/* Top-right theme toggle */}
           <div className="absolute top-6 right-6">
             <ThemeToggle />
