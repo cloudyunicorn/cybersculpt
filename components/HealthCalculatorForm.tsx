@@ -13,6 +13,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { cmToFeetInches } from "@/utils/healthCalculations";
 
 export const FormSchema = z.object({
   age: z.number().min(1).max(120),
@@ -81,6 +82,9 @@ export function HealthCalculatorForm({ onSubmit }: HealthCalculatorFormProps) {
             type="number"
             {...form.register("height", { valueAsNumber: true })}
           />
+          <p className="text-sm text-muted-foreground">
+            ≈ {cmToFeetInches(form.watch("height") || 0)}
+          </p>
         </div>
         {/* Weight */}
         <div className="space-y-2">

@@ -44,6 +44,13 @@ export function getBMICategory(bmi: number) {
   return "Obese";
 }
 
+export function cmToFeetInches(cm: number): string {
+  const inches = cm / 2.54;
+  const feet = Math.floor(inches / 12);
+  const remainingInches = Math.round(inches % 12);
+  return `${feet}ft${remainingInches}in`;
+}
+
 export function generateRecommendations(bmiCategory: string, goal: string) {
   const recommendations = [];
 
